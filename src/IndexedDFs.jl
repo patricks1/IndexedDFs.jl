@@ -74,6 +74,11 @@ function getindex(idf::IndexedDF, idx_val)
     return idf.df[row_i, :]
 end
 
+# Allow getting a whole column
+function getindex(idf::IndexedDF, ::Colon, col::Union{String, Symbol})
+    return idf.df[:, col]
+end
+
 # Allow getting a specific cell by (index_val, column)
 function getindex(idf::IndexedDF, idx_val, col)
     col = String(col)
