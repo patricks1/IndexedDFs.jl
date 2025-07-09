@@ -152,4 +152,17 @@ function push!(idf::IndexedDF, row::Vector)
     return idf
 end
 
+# Allow the user to add a column
+function setindex!(
+            idf::IndexedDF,
+            col::AbstractVector,
+            ::Colon,
+            col_name::Union{String, Symbol}
+        )
+    if length(col) != DataFrames.nrow(idf.df)
+        throw(ArgumentError("Column has the wrong number of rows."))
+    end
+    idf.df[:, col_name] = col
+end
+
 end # module
