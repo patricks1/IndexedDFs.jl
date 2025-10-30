@@ -16,3 +16,4 @@ test = ["Test"]
 [compat]
 julia = "1"
 DataFrames = "1"
+StatsBase = "0"
