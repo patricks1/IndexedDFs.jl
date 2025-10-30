@@ -1,5 +1,5 @@
 # IndexedDFs
-A small package to allow Julia DataFrames to have meaningful row indices.  
+A small package to allow Julia `DataFrames` to have meaningful row indices.  
 
 Create an `IndexedDF` by feeding a `DataFrames.DataFrame` into `IndexedDFs.IndexedDF` and specifying the index column. For example,
 ```julia
@@ -8,6 +8,28 @@ import IndexedDFs
 df = DataFrames.DataFrame(id=[100, 200, 300], a=[1, 2, 3], b=[4, 5, 6])
 idf = IndexedDFs.IndexedDF(df, "id")
 ```
-The `IndexedDF` then behaves much like a regular `DataFrames.DataFrame`, although I haven't made an exhaustive effort to cover all the overloads.  
+The `IndexedDF` then behaves much like a regular `DataFrames.DataFrame`, although I haven't made an exhaustive effort to cover all the overloads. For example, the user could build on `idf` with
+```julia
+idf[400] = (a=7, b=8)
+idf[500] = Dict("a" => 9, "b" => 10)
+idf[:, "c"] = [11, 12, 13, 14, 15]
+push!(idf, (id=600, a=16, b=17, c=18))
+println(idf)
+```
+etcetera.
+```
+# Output
+IndexedDF with index column id:
+6×4 DataFrame
+ Row │ id     a      b      c     
+     │ Int64  Int64  Int64  Int64 
+─────┼────────────────────────────
+   1 │   100      1      4     11
+   2 │   200      2      5     12
+   3 │   300      3      6     13
+   4 │   400      7      8     14
+   5 │   500      9     10     15
+   6 │   600     16     17     18
+```
 
-Be cautions about manually modifying the underlying `DataFrame`. Things like `IndexedDFs.check_uniqueness` don't run when you do that until the next time you access the `IndexedDF`.
+The `IndexedDF` has the underlying `DataFrames.DataFrame` as an attribute called `df`. However, be cautions about manually modifying that. Things like `IndexedDFs.check_uniqueness` don't run when you do that until the next time you access the `IndexedDF`. In some cases, I might not have built out the specific overload you're looking for, so you'll have to access the underlying `DataFrame`. Just be careful with what you do. Don't make a new row with the same index value as one that already exists.
